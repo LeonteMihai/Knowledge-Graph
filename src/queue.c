@@ -16,14 +16,31 @@
 
 Queue *queue_create(void)
 {
-    /* TODO: alocă și inițializează cu zero o structură Queue */
-    return NULL;
+    Queue *q = malloc(sizeof(Queue));
+    if(q == NULL)
+        return NULL;
+
+    q->front = NULL;
+    q->rear = NULL;
+    q->size = 0;
+    return q;
 }
 
 void queue_free(Queue *q)
 {
-    /* TODO: golește coada eliberând fiecare nod și datele sale */
-    (void)q;
+    if(q == NULL)
+        return;
+
+    QueueNode *curr = q->front;
+
+    while(curr != NULL)
+    {
+        QueueNode *next = curr->next;
+        free(curr->data);
+        free(curr);
+        curr = next;
+    }
+    free(q);
 }
 
 /* ----------------------------------------------------------
@@ -32,18 +49,55 @@ void queue_free(Queue *q)
 
 int queue_enqueue(Queue *q, const char *data)
 {
-    /* TODO: duplică data, alocă QueueNode, adaugă la capătul rear */
-    (void)q;
-    (void)data;
-    return -1;
+    if(q == NULL || data == NULL)
+        return -1;
+
+    QueueNode *node = malloc(sizeof(QueueNode));
+    
+    if(node == NULL)
+        return -1;
+
+    node->data = malloc(strlen(data)+1);
+
+    if(node->data == NULL)
+    {
+        free(node);
+        return -1;
+    }
+
+    strcpy(node->data,data);
+    node->next = NULL;
+
+    if(q->rear == NULL)
+    {
+        q->front = node;
+        q->rear = node;
+    }
+    else
+    {
+        q->rear->next = node;
+        q->rear = node;
+    }
+
+    q->size++;
+    return 0;
 }
 
 char *queue_dequeue(Queue *q)
 {
-    /* TODO: elimină nodul din față, returnează datele sale (apelantul
-     *       eliberează) */
-    (void)q;
-    return NULL;
+    if(q == NULL || q->front == NULL)
+        return NULL;
+
+    QueueNode *tmp = q->front;
+    char *data = tmp->data;
+    q->front = q->front->next;
+
+    if(q->front == NULL)
+        q->rear = NULL;
+
+    free(temp);
+    q->size--;
+    return data;
 }
 
 /* ----------------------------------------------------------
@@ -52,13 +106,19 @@ char *queue_dequeue(Queue *q)
 
 int queue_is_empty(const Queue *q)
 {
-    /* TODO: returnează 1 când size == 0 */
-    (void)q;
-    return 1;
+    return (q == NULL || q->size == 0);
 }
 
 void queue_print(const Queue *q)
 {
-    /* TODO: iterează de la front la rear, afișează fiecare șir de date */
-    (void)q;
+    if(q == NULL)
+        return;
+
+    QueueNode *curr = q->front;
+
+    while(curr)
+    {
+        printf("%s\n",curr->data);
+        curr = curr->next;
+    }
 }

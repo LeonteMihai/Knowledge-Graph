@@ -21,9 +21,9 @@
 static void swap(HeapNode *a, HeapNode *b) __attribute__((unused));
 static void swap(HeapNode *a, HeapNode *b)
 {
-    /* TODO: interschimbă cele două elemente HeapNode */
-    (void)a;
-    (void)b;
+    HeapNode temp = *a;
+    *a = *b;
+    *b = *temp;
 }
 
 /* ----------------------------------------------------------
@@ -33,19 +33,35 @@ static void swap(HeapNode *a, HeapNode *b)
 static void sift_up(MinHeap *h, int i) __attribute__((unused));
 static void sift_up(MinHeap *h, int i)
 {
-    /* TODO: mută elementul de la indexul i în sus până când
-     *       proprietatea heap este respectată */
-    (void)h;
-    (void)i;
+    while(i > 0)
+    {
+        int parent = (i-1)/2;
+        if(h->data[parent].dist <= h->data[i].dist)
+            break;
+
+        swap(&h->data[parent],&h->data[i]);
+        i = parent;
+    }
 }
 
 static void sift_down(MinHeap *h, int i) __attribute__((unused));
 static void sift_down(MinHeap *h, int i)
 {
-    /* TODO: mută elementul de la indexul i în jos până când
-     *       proprietatea heap este respectată */
-    (void)h;
-    (void)i;
+    while(1)
+    {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int minn = i;
+
+        if(left < h->size && h->data[left].dist < h->data[minn].dist)
+            minn = left;
+        if(right < h->size && h->data[right].dist < h->data[minn].dist)
+            minn = right;
+        if(minn == i)
+            break;
+        swap(&h->data[i],&h->data[minn]);
+        i = minn;
+    }
 }
 
 /* ----------------------------------------------------------
@@ -54,15 +70,30 @@ static void sift_down(MinHeap *h, int i)
 
 MinHeap *heap_create(int initial_capacity)
 {
-    /* TODO: alocă MinHeap și tabloul său de date */
-    (void)initial_capacity;
-    return NULL;
+    if(initial_capacity <= 0)
+        return NULL;
+
+    MinHeap *h = malloc(sizeof(MinHeap));
+    if(h == NULL)
+        retun NULL;
+
+    h->data = malloc(sizeof(MinHeap) * initial_capacity);
+    if(h->data == NULL)
+    {
+        free(h);
+        return NULL;
+    }
+    h->size = 0;
+    h->capacity = initial_capacity;
+    return h;
 }
 
 void heap_free(MinHeap *h)
 {
-    /* TODO: eliberează tabloul de date, apoi structura */
-    (void)h;
+    if(h == NULL)
+        return;
+    free(h->data);
+    free(h);
 }
 
 /* ----------------------------------------------------------
@@ -71,35 +102,61 @@ void heap_free(MinHeap *h)
 
 int heap_push(MinHeap *h, int node_id, float dist)
 {
-    /* TODO: adaugă elementul, extinde dacă e necesar, execută sift up */
-    (void)h;
-    (void)node_id;
-    (void)dist;
-    return -1;
+    if(h == NULL)
+        return -1;
+    if(h->size == h->capacity)
+    {
+        int new_capacity = h->capacity * 2;
+        HeapNode *new_data = realloc(h->data,sizeof(HeapNode) * new_capacity);
+        if(new_data == NULL)
+            return -1;
+        h->data = new_data;
+        h->capacity = new_capacity;
+    }
+
+    int i = h->size;
+    h->data[i].node_id = node_id;
+    h->data[i].dist = dist;
+    h->size++;
+    sift_up(h,i);
+    return 0;
 }
 
 HeapNode heap_pop(MinHeap *h)
 {
-    /* TODO: interschimbă rădăcina cu ultimul element, micșorează,
-     *       execută sift down, returnează vechea rădăcină */
     HeapNode rezultat = {-1, FLT_MAX};
-    (void)h;
+    if(h == NULL || h->size = 0)
+        return rezultat;
+
+    rezultat = h->data[0];
+    h->data[0] = h->data[h->size - 1];
+    h->size--;
+    if(h->size > 0)
+        sift_down(h,0);
     return rezultat;
 }
 
 int heap_is_empty(const MinHeap *h)
 {
-    /* TODO: returnează 1 când size == 0 */
-    (void)h;
-    return 1;
+    if(h == NULL)
+        return 1;
+    return h->size == 0;
 }
 
 int heap_decrease_key(MinHeap *h, int node_id, float new_dist)
 {
-    /* TODO: găsește node_id, actualizează dist dacă e mai mic,
-     *       execută sift up */
-    (void)h;
-    (void)node_id;
-    (void)new_dist;
-    return -1;
+    if(h == NULL)
+        return -1;
+    for(int i = 0;i < h->size;i++)
+    {
+        if(h->data[i].node_id == node_id)
+        {
+            if(new_dist >= h->data[i].dist)
+                return 0;
+            h->data[i].dist = new_dist;
+            sift_up(h,i);
+            return 0;
+        }
+    }
+    return 1;
 }
