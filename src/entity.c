@@ -79,7 +79,6 @@ void entity_free(Entity *e)
     if(e == NULL)
         return;
     free(e->name);
-    free(e);
 }
 
 /* ----------------------------------------------------------
@@ -91,5 +90,5 @@ void entity_print(const Entity *e)
     if(e == NULL)
         return;
 
-    printf("%d %s %s\n",e->id,e->name,entity_type_to_str(e->name));
+    printf("%d %s %s\n",e->id,e->name,entity_type_to_str(e->type));
 }

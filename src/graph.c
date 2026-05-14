@@ -62,7 +62,7 @@ Graph *graph_create(int initial_capacity)
     if(g == NULL)
         return NULL;
 
-    g->node = malloc(sizeof(GraphNode) * initial_capacity);
+    g->nodes = malloc(sizeof(GraphNode) * initial_capacity);
     if(g->nodes == NULL)
     {
         free(g);
@@ -148,7 +148,7 @@ int graph_add_edge(Graph *g, int src_id, int dest_id,
 
     EdgeNode **head = &g->nodes[src_id].edges;
 
-    if(head == NULL)
+    if(*head == NULL)
         {
             *head = new_edge;
         }

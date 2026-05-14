@@ -95,7 +95,7 @@ char *queue_dequeue(Queue *q)
     if(q->front == NULL)
         q->rear = NULL;
 
-    free(temp);
+    free(tmp);
     q->size--;
     return data;
 }

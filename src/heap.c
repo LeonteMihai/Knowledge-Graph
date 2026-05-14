@@ -23,7 +23,7 @@ static void swap(HeapNode *a, HeapNode *b)
 {
     HeapNode temp = *a;
     *a = *b;
-    *b = *temp;
+    *b = temp;
 }
 
 /* ----------------------------------------------------------
@@ -75,9 +75,9 @@ MinHeap *heap_create(int initial_capacity)
 
     MinHeap *h = malloc(sizeof(MinHeap));
     if(h == NULL)
-        retun NULL;
+        return NULL;
 
-    h->data = malloc(sizeof(MinHeap) * initial_capacity);
+    h->data = malloc(sizeof(HeapNode) * initial_capacity);
     if(h->data == NULL)
     {
         free(h);
@@ -125,7 +125,7 @@ int heap_push(MinHeap *h, int node_id, float dist)
 HeapNode heap_pop(MinHeap *h)
 {
     HeapNode rezultat = {-1, FLT_MAX};
-    if(h == NULL || h->size = 0)
+    if(h == NULL || h->size == 0)
         return rezultat;
 
     rezultat = h->data[0];

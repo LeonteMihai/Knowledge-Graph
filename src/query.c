@@ -23,15 +23,15 @@ QueryType parse_query_type(const char *line)
     if(line == NULL)
         return Q_UNKNOWN;
 
-    if(strcmp(line,"EXISTS",6) == 0)
+    if(strncmp(line,"EXISTS",6) == 0)
         return Q_EXISTS;
-    if(strcmp(line,"EDGE",4) == 0)
+    if(strncmp(line,"EDGE",4) == 0)
         return Q_EDGE;
-    if(strcmp(line,"NEIGHBORS",9) == 0)
+    if(strncmp(line,"NEIGHBORS",9) == 0)
         return Q_NEIGHBORS;
-    if(strcmp(line,"PATH",4) == 0)
+    if(strncmp(line,"PATH",4) == 0)
         return Q_PATH;
-    if(strcmp(line,"DIJKSTRA",8) == 0)
+    if(strncmp(line,"DIJKSTRA",8) == 0)
         return Q_DIJKSTRA;
 
     return Q_UNKNOWN;
@@ -128,7 +128,7 @@ void process_path_bfs(const Graph *g, const BST *tree,
 
     if(src == NULL || dest == NULL)
     {
-        printf("PATH %s %s:NU \n",src_name,dest_name);
+        printf("PATH %s %s: NU\n",src_name,dest_name);
         return;
     }
 
@@ -161,14 +161,14 @@ void process_path_bfs(const Graph *g, const BST *tree,
         GraphNode *node = graph_get_node(g,u);  
         EdgeNode *e;
 
-        for(e = node->edges;e != NULL;e = e->next);
+        for(e = node->edges;e != NULL;e = e->next)
         {
             int v = e->dest_id;
 
             if(!visited[v])
             {
                 visited[v] = 1;
-                parent[v] = u;
+                parents[v] = u;
 
                 char tmp[32];
                 snprintf(tmp,sizeof(tmp),"%d",v);
@@ -182,7 +182,7 @@ void process_path_bfs(const Graph *g, const BST *tree,
         int path[n];
         int len = 0;
 
-        for(int p = d;p != -1;p = parent[p])
+        for(int p = d;p != -1;p = parents[p])
         path[len++] = p;
 
     printf("PATH %s %s:",src_name,dest_name);
@@ -201,7 +201,7 @@ void process_path_bfs(const Graph *g, const BST *tree,
         printf("PATH %s %s: NU\n",src_name,dest_name);
 
     free(visited);
-    free(parent);
+    free(parents);
     queue_free(q);
 }
 
@@ -223,7 +223,7 @@ void process_dijkstra(const Graph *g, const BST *tree,
 
     int n = g->size;
     int s = src->entity.id;
-    int d = src->entity.id;
+    int d = dest->entity.id;
 
     float *dist = malloc(n * sizeof(float));
     int *parent = malloc(n * sizeof(int));
@@ -264,12 +264,13 @@ void process_dijkstra(const Graph *g, const BST *tree,
             {
                 dist[v] = new_dist;
                 parent[v] = u;
+                heap_push(h,v,new_dist);
             }
         }
     }
 
     if(dist[d] == FLT_MAX)
-        printf("DIJKSTRA %s %s: NU\n",src_name,dest_name)
+        printf("DIJKSTRA %s %s: NU\n",src_name,dest_name);
     else
     {
         int path[n];
@@ -278,11 +279,11 @@ void process_dijkstra(const Graph *g, const BST *tree,
         for(int p = d;p != -1;p = parent[p])
             path[len++] = p;
 
-        printf("DIJKSTRA %s %s:COST = %.2f; DRUM =",src_name,dest_name,dist[d]);
+        printf("DIJKSTRA %s %s: COST = %.2f; DRUM =",src_name,dest_name,dist[d]);
 
         for(int i = len-1;i >= 0;i--)
         {
-            printf(" %s",graph_get_node(g,path[i])->entity.name)
+            printf(" %s",graph_get_node(g,path[i])->entity.name);
             if(i > 0)
                 printf(" ->");
         }
@@ -312,7 +313,7 @@ void process_all_queries(Queue *q, const Graph *g, const BST *tree)
         switch(type)
         {
             case Q_EXISTS:
-                if(sscanf(linie,"EXISTS %99s",a) == 1)
+                if(sscanf(line,"EXISTS %99s",a) == 1)
                     process_exists(tree,a);
                 break;
             case Q_EDGE:

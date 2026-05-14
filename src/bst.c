@@ -136,7 +136,7 @@ GraphNode *bst_search(const BST *tree, const char *name)
 {
     if(tree == NULL)
         return NULL;
-    return bst_search_recursive;
+    return bst_search_recursive(tree->root,name);
 }
 
 /* ----------------------------------------------------------
@@ -148,5 +148,5 @@ void bst_inorder_print(const BST *tree)
     if(tree == NULL)
         return;
 
-    bst_inorder_print(tree);
+    bst_inorder_recursive(tree->root);
 }
