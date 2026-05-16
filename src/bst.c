@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../include/bst.h"
-
+#include "../include/entity.h"
 /* =========================================================
  * bst.c
  * BST indexat după numele entității; nodurile conțin pointeri
@@ -82,7 +82,7 @@ static void bst_inorder_recursive(const BSTNode *node)
 
     bst_inorder_recursive(node->left);
 
-    printf("%s\n",node->graph_node->entity.name);
+   entity_print(&node->graph_node->entity.name);
 
     bst_inorder_recursive(node->right);
 }
