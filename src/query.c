@@ -77,6 +77,7 @@ void process_edge(const Graph *g, const BST *tree,
     }
 
     printf("EDGE %s %s: NU\n",src_name,dest_name);
+    (void)g;
 }
 
 /* ----------------------------------------------------------

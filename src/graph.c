@@ -89,7 +89,7 @@ void graph_free(Graph *g)
             free(e);
             e = urm;
         }
-        entity_free(&node->entity);
+        free(node->entity.name);
     }
     free(g->nodes);
     free(g);
@@ -132,9 +132,6 @@ int graph_add_edge(Graph *g, int src_id, int dest_id,
         return -1;
 
     if(src_id < 0 || src_id >= g->size)
-        return -1;
-
-    if(dest_id < 0 || dest_id >= g->size)
         return -1;
 
     EdgeNode *new_edge = malloc(sizeof(EdgeNode));

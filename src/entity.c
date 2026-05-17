@@ -79,6 +79,7 @@ void entity_free(Entity *e)
     if(e == NULL)
         return;
     free(e->name);
+    free(e);
 }
 
 /* ----------------------------------------------------------

@@ -82,7 +82,7 @@ static void bst_inorder_recursive(const BSTNode *node)
 
     bst_inorder_recursive(node->left);
 
-   entity_print(&node->graph_node->entity.name);
+   entity_print(&node->graph_node->entity);
 
     bst_inorder_recursive(node->right);
 }
