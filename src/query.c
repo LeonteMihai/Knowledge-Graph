@@ -136,25 +136,21 @@ void process_path_bfs(const Graph *g, const BST *tree,
     int n = g->size;
     int *visited = calloc(n,sizeof(int));
     int *parents = malloc(n * sizeof(int));
+    int *queue = malloc(n * sizeof(int));
+    int head, tail;
+    head = tail = 0;
     for(int i = 0;i < n;i++)
         parents[i] = -1;
-
-    Queue *q = queue_create();
 
     int s = src->entity.id;
     int d = dest->entity.id;
 
-    char buf[32];
-    snprintf(buf,sizeof(buf),"%d",s);
-    queue_enqueue(q,buf);
-
+    queue[tail++] = s;
     visited[s] = 1;
     
-    while(!queue_is_empty(q))
+    while(head < tail)
     {
-        char *a = queue_dequeue(q);
-        int u = atoi(a);
-        free(a);
+        int u = queue[head++];
 
         if(u == d)
             break;
@@ -170,10 +166,7 @@ void process_path_bfs(const Graph *g, const BST *tree,
             {
                 visited[v] = 1;
                 parents[v] = u;
-
-                char tmp[32];
-                snprintf(tmp,sizeof(tmp),"%d",v);
-                queue_enqueue(q,tmp);
+                queue[tail++] = v;
             }
         }
     }
@@ -203,7 +196,7 @@ void process_path_bfs(const Graph *g, const BST *tree,
 
     free(visited);
     free(parents);
-    queue_free(q);
+    free(queue);
 }
 
 /* ----------------------------------------------------------
